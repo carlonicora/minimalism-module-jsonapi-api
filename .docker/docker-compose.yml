@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  minimalism-module-jsonapi-api:
+    container_name: minimalism-module-jsonapi-api
+    image: carlonicora/php-cli-base:7.4.3.2
+    working_dir: /app
+    volumes:
+      - ../:/app
+      - ../:/opt/project
+    tty: true
+    stdin_open: true

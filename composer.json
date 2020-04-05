@@ -1,0 +1,28 @@
+{
+  "name": "carlonicora/minimalism-module-jsonapi-api",
+  "description": "{json:api} api module for minimalism",
+  "version": "1.0.0-beta4",
+  "homepage": "https://carlonicora.com",
+  "time": "2020-04-05",
+  "license": "MIT",
+  "type": "library",
+  "minimum-stability": "beta",
+  "authors": [
+    {
+      "name": "Carlo Nicora",
+      "email": "carlo@carlonicora.com",
+      "homepage": "http://carlonicora.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "carlonicora\\minimalism\\modules\\jsonapi\\api\\":"src/"
+    }
+  },
+  "require": {
+    "php": "^7.4",
+    "carlonicora/minimalism": "~10.0",
+    "carlonicora/minimalism-module-jsonapi": "~1.0"
+  }
+}
