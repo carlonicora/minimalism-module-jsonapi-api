@@ -1,7 +1,7 @@
 {
   "name": "carlonicora/minimalism-module-jsonapi-api",
   "description": "{json:api} api module for minimalism",
-  "version": "1.0.0-beta4",
+  "version": "1.0.0-beta1",
   "homepage": "https://carlonicora.com",
   "time": "2020-04-05",
   "license": "MIT",
