@@ -1,5 +1,5 @@
 <?php
-namespace carlonicora\minimalism\modules\jsonapiApi\abstracts;
+namespace carlonicora\minimalism\modules\jsonapi\api\abstracts;
 
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\modules\jsonapi\abstracts\abstractJsonApiModel;

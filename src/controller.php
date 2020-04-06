@@ -1,5 +1,5 @@
 <?php
-namespace carlonicora\minimalism\modules\jsonapiApi;
+namespace carlonicora\minimalism\modules\jsonapi\api;
 
 use carlonicora\minimalism\core\bootstrapper;
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
