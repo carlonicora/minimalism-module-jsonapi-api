@@ -119,6 +119,8 @@ class controller extends abstractJsonApiController {
 
         header(dataResponse::generateProtocol() . ' ' . $code . ' ' . $apiResponse->generateText());
 
+        $this->services->destroyStatics();
+
         if (bootstrapper::$servicesCache !== null){
             file_put_contents(bootstrapper::$servicesCache, serialize($this->services));
         }
