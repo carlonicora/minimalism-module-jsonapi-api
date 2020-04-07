@@ -76,7 +76,7 @@ class controller extends abstractJsonApiController {
 
         $url = $_SERVER['REQUEST_URI'];
 
-        $security->validateSignature($this->signature, $this->verb, $url,  $this->passedParameters, $security->getSecurityClient(), $security->getSecuritySession());
+        $security->validateSignature($this->signature, $this->verb, $url,  $this->bodyParameters, $security->getSecurityClient(), $security->getSecuritySession());
     }
 
     /**
