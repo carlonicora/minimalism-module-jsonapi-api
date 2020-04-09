@@ -45,12 +45,25 @@ class controller extends abstractApiController {
 
         $url = $_SERVER['REQUEST_URI'];
 
-        $bodyParameters = $this->bodyParameters;
-        if ($this->verb === 'POST') {
-            $bodyParameters = $this->passedParameters;
-        }
+        $security->validateSignature($this->signature, $this->verb, $url, $this->bodyParameters, $security->getSecurityClient(), $security->getSecuritySession());
+    }
 
-        $security->validateSignature($this->signature, $this->verb, $url,  $bodyParameters, $security->getSecurityClient(), $security->getSecuritySession());
+    /**
+     *
+     */
+    protected function parseUriParameters(): void {
+        $uri = strtok($_SERVER['REQUEST_URI'], '?');
+
+        if (!(isset($uri) && $uri === '/')) {
+            $variables = array_filter(explode('/', substr($uri, 1)), 'strlen');
+            $variable = current($variables);
+            if (stripos($variable, 'v') === 0 && is_numeric(substr($variable, 1, 1)) && strpos($variable, '.') !== 0){
+                $this->version = $variable;
+                array_shift($variables);
+            }
+
+            $this->passedParameters = $this->parseModelNameFromUri($variables);
+        }
     }
 
     /**
