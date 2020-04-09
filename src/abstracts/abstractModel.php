@@ -2,6 +2,8 @@
 namespace carlonicora\minimalism\modules\jsonapi\api\abstracts;
 
 use carlonicora\minimalism\core\modules\abstracts\models\abstractApiModel;
+use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
+use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\service\jsonapi\interfaces\responseInterface;
 use carlonicora\minimalism\service\jsonapi\responses\dataResponse;
 use carlonicora\minimalism\service\jsonapi\responses\errorResponse;
@@ -12,6 +14,19 @@ abstract class abstractModel extends abstractApiModel {
 
     /** @var errorResponse|null  */
     protected ?errorResponse $error=null;
+
+    /**
+     * model constructor.
+     * @param servicesFactory $services
+     * @param array $passedParameters
+     * @param string $verb
+     * @param array $file
+     * @throws serviceNotFoundException
+     */
+    public function __construct(servicesFactory $services, array $passedParameters, string $verb, array $file=null){
+        parent::__construct($services, $passedParameters, $verb, $file);
+        $this->response = new dataResponse();
+    }
 
     /**
      * @return responseInterface
