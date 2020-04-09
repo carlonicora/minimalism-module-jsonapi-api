@@ -1,62 +1,17 @@
 <?php
 namespace carlonicora\minimalism\modules\jsonapi\api\abstracts;
 
-use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
-use carlonicora\minimalism\modules\jsonapi\abstracts\abstractJsonApiModel;
-use carlonicora\minimalism\modules\jsonapi\interfaces\responseInterface;
-use carlonicora\minimalism\modules\jsonapi\responses\errorResponse;
-use carlonicora\minimalism\core\services\factories\servicesFactory;
+use carlonicora\minimalism\core\modules\abstracts\models\abstractApiModel;
+use carlonicora\minimalism\service\jsonapi\interfaces\responseInterface;
+use carlonicora\minimalism\service\jsonapi\responses\dataResponse;
+use carlonicora\minimalism\service\jsonapi\responses\errorResponse;
 
-abstract class abstractModel extends abstractJsonApiModel {
+abstract class abstractModel extends abstractApiModel {
+    /** @var dataResponse  */
+    protected dataResponse $response;
 
-    /** @var bool */
-    protected bool $requiresAuthDELETE=false;
-
-    /** @var bool */
-    protected bool $requiresAuthGET=false;
-
-    /** @var bool */
-    protected bool $requiresAuthPOST=false;
-
-    /** @var bool */
-    protected bool $requiresAuthPUT=false;
-
-    /** @var string */
-    public string $verb='GET';
-
-    /**
-     * abstractApiModel constructor.
-     * @param servicesFactory $services
-     * @param array $passedParameters
-     * @param string $verb
-     * @param array|null $file
-     * @throws serviceNotFoundException
-     */
-    public function __construct(servicesFactory $services, array $passedParameters, string $verb, array $file=null){
-        $this->verb = $verb;
-        parent::__construct($services, $passedParameters, $file);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getParameters(): array {
-        if (array_key_exists($this->verb, $this->parameters)){
-            return $this->parameters[$this->verb];
-        }
-
-        return [];
-    }
-
-    /**
-     * @param $verb
-     * @return mixed
-     */
-    public function requiresAuth($verb): bool {
-        $authName = 'requiresAuth' . $verb;
-
-        return $this->$authName;
-    }
+    /** @var errorResponse|null  */
+    protected ?errorResponse $error=null;
 
     /**
      * @return responseInterface
