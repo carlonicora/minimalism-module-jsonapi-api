@@ -6,9 +6,9 @@ use carlonicora\minimalism\core\modules\abstracts\controllers\abstractApiControl
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\core\traits\httpHeaders;
-use carlonicora\minimalism\service\jsonapi\interfaces\responseInterface;
-use carlonicora\minimalism\service\jsonapi\responses\dataResponse;
-use carlonicora\minimalism\service\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
+use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
+use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
 use carlonicora\minimalism\services\security\security;
 use Exception;
 

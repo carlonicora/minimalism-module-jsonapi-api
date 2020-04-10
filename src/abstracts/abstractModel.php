@@ -4,9 +4,9 @@ namespace carlonicora\minimalism\modules\jsonapi\api\abstracts;
 use carlonicora\minimalism\core\modules\abstracts\models\abstractApiModel;
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
-use carlonicora\minimalism\service\jsonapi\interfaces\responseInterface;
-use carlonicora\minimalism\service\jsonapi\responses\dataResponse;
-use carlonicora\minimalism\service\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
+use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
+use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
 
 abstract class abstractModel extends abstractApiModel {
     /** @var dataResponse  */
