@@ -55,4 +55,11 @@ abstract class abstractModel extends abstractApiModel {
     public function PUT(): responseInterface {
         return new errorResponse(errorResponse::HTTP_STATUS_405);
     }
+
+    /**
+     * @return errorResponse|null
+     */
+    public function preRender() : ?errorResponse {
+        return $this->error;
+    }
 }
