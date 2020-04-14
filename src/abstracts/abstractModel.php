@@ -2,11 +2,14 @@
 namespace carlonicora\minimalism\modules\jsonapi\api\abstracts;
 
 use carlonicora\minimalism\core\modules\abstracts\models\abstractApiModel;
+use carlonicora\minimalism\core\services\exceptions\configurationException;
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
 use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
 use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\MySQL\exceptions\dbRecordNotFoundException;
+use carlonicora\minimalism\services\MySQL\exceptions\dbSqlException;
 
 abstract class abstractModel extends abstractApiModel {
     /** @var dataResponse  */
@@ -30,6 +33,11 @@ abstract class abstractModel extends abstractApiModel {
 
     /**
      * @return responseInterface
+     * @throws serviceNotFoundException
+     * @throws configurationException
+     * @throws dbRecordNotFoundException
+     * @throws dbSqlException
+     * @noinspection PhpDocRedundantThrowsInspection
      */
     public function DELETE(): responseInterface {
         return new errorResponse(errorResponse::HTTP_STATUS_405);
@@ -37,6 +45,11 @@ abstract class abstractModel extends abstractApiModel {
 
     /**
      * @return responseInterface
+     * @throws serviceNotFoundException
+     * @throws configurationException
+     * @throws dbRecordNotFoundException
+     * @throws dbSqlException
+     * @noinspection PhpDocRedundantThrowsInspection
      */
     public function GET(): responseInterface {
         return new errorResponse(errorResponse::HTTP_STATUS_405);
@@ -44,6 +57,11 @@ abstract class abstractModel extends abstractApiModel {
 
     /**
      * @return responseInterface
+     * @throws serviceNotFoundException
+     * @throws configurationException
+     * @throws dbRecordNotFoundException
+     * @throws dbSqlException
+     * @noinspection PhpDocRedundantThrowsInspection
      */
     public function POST(): responseInterface {
         return new errorResponse(errorResponse::HTTP_STATUS_405);
@@ -51,6 +69,11 @@ abstract class abstractModel extends abstractApiModel {
 
     /**
      * @return responseInterface
+     * @throws serviceNotFoundException
+     * @throws configurationException
+     * @throws dbRecordNotFoundException
+     * @throws dbSqlException
+     * @noinspection PhpDocRedundantThrowsInspection
      */
     public function PUT(): responseInterface {
         return new errorResponse(errorResponse::HTTP_STATUS_405);

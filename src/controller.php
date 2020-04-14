@@ -6,9 +6,12 @@ use carlonicora\minimalism\core\modules\abstracts\controllers\abstractApiControl
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\core\traits\httpHeaders;
+use carlonicora\minimalism\services\jsonapi\abstracts\abstractResponseObject;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
 use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
 use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\MySQL\exceptions\dbRecordNotFoundException;
+use carlonicora\minimalism\services\MySQL\exceptions\dbSqlException;
 use carlonicora\minimalism\services\security\security;
 use Exception;
 
@@ -68,6 +71,7 @@ class controller extends abstractApiController {
 
     /**
      * @return string
+     * @noinspection PhpRedundantCatchClauseInspection
      */
     public function render(): string{
         /** @var errorResponse $error  */
@@ -76,7 +80,14 @@ class controller extends abstractApiController {
         }
 
         /** @var responseInterface $apiResponse */
-        $apiResponse = $this->model->{$this->verb}();
+        try {
+            $apiResponse = $this->model->{$this->verb}();
+        } catch (serviceNotFoundException | dbSqlException $exception) {
+            $this->writeException($exception);
+        } catch (dbRecordNotFoundException $notFoundException) {
+            $apiResponse = new errorResponse(abstractResponseObject::HTTP_STATUS_404, $notFoundException->getMessage(), $notFoundException->getCode());
+        }
+
 
         $code = $apiResponse->getStatus();
         $GLOBALS['http_response_code'] = $code;
