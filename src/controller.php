@@ -14,6 +14,7 @@ use carlonicora\minimalism\services\MySQL\exceptions\dbRecordNotFoundException;
 use carlonicora\minimalism\services\MySQL\exceptions\dbSqlException;
 use carlonicora\minimalism\services\security\security;
 use Exception;
+use RuntimeException;
 
 class controller extends abstractApiController {
     use httpHeaders;
@@ -82,10 +83,10 @@ class controller extends abstractApiController {
         /** @var responseInterface $apiResponse */
         try {
             $apiResponse = $this->model->{$this->verb}();
-        } catch (serviceNotFoundException | dbSqlException $exception) {
-            $this->writeException($exception);
         } catch (dbRecordNotFoundException $notFoundException) {
             $apiResponse = new errorResponse(abstractResponseObject::HTTP_STATUS_404, $notFoundException->getMessage(), $notFoundException->getCode());
+        } catch (serviceNotFoundException | dbSqlException | RuntimeException | Exception $exception) {
+            $this->writeException($exception);
         }
 
 
