@@ -23,17 +23,19 @@ class controller extends abstractApiController {
     private string $signature;
 
     /**
-     * apiController constructor.
+     * controller constructor.
      * @param servicesFactory $services
      * @param string|null $modelName
      * @param array|null $parameterValueList
      * @param array|null $parameterValues
-     * @throws Exception
      */
     public function __construct(servicesFactory $services, string $modelName=null, array $parameterValueList=null, array $parameterValues=null){
-        parent::__construct($services, $modelName, $parameterValueList, $parameterValues);
-
-        $this->validateSignature();
+        try {
+            parent::__construct($services, $modelName, $parameterValueList, $parameterValues);
+            $this->validateSignature();
+        } catch (Exception $exception) {
+            $this->writeException($exception);
+        }
     }
 
 
