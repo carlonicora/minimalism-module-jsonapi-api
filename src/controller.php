@@ -89,8 +89,8 @@ class controller extends abstractApiController {
             $apiResponse = new errorResponse(abstractResponseObject::HTTP_STATUS_404, $notFoundException->getMessage(), $notFoundException->getCode());
         } catch (serviceNotFoundException | dbSqlException | RuntimeException | Exception $exception) {
             $this->writeException($exception);
+            exit;
         }
-
 
         $code = $apiResponse->getStatus();
         $GLOBALS['http_response_code'] = $code;
