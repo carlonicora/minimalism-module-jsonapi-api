@@ -111,12 +111,12 @@ class controller extends abstractApiController {
      * @return void
      */
     public function writeException(Exception $e): void {
-        $error = new errorResponse($e->getCode() ?? 500, $e->getMessage());
+        $error = new errorResponse(500, $e->getMessage(), $e->getCode());
 
-        $code = $error->getStatus();
-        $GLOBALS['http_response_code'] = $code;
+        $httpStatusCode = $error->getStatus();
+        $GLOBALS['http_response_code'] = $httpStatusCode;
 
-        header(dataResponse::generateProtocol() . ' ' . $code . ' ' . $error->generateText());
+        header(dataResponse::generateProtocol() . ' ' . $httpStatusCode . ' ' . $error->generateText());
 
         echo $error->toJson();
     }
