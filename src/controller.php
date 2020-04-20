@@ -6,15 +6,16 @@ use carlonicora\minimalism\core\modules\abstracts\controllers\abstractApiControl
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\core\traits\httpHeaders;
+use carlonicora\minimalism\modules\jsonapi\api\exceptions\entityNotFoundException;
+use carlonicora\minimalism\modules\jsonapi\api\exceptions\forbiddenException;
+use carlonicora\minimalism\modules\jsonapi\api\exceptions\unauthorizedException;
 use carlonicora\minimalism\services\jsonapi\abstracts\abstractResponseObject;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
 use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
 use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
-use carlonicora\minimalism\services\MySQL\exceptions\dbRecordNotFoundException;
-use carlonicora\minimalism\services\MySQL\exceptions\dbSqlException;
 use carlonicora\minimalism\services\security\security;
 use Exception;
-use RuntimeException;
+use JsonException;
 
 class controller extends abstractApiController {
     use httpHeaders;
@@ -28,11 +29,18 @@ class controller extends abstractApiController {
      * @param string|null $modelName
      * @param array|null $parameterValueList
      * @param array|null $parameterValues
+     * @throws JsonException
      */
     public function __construct(servicesFactory $services, string $modelName=null, array $parameterValueList=null, array $parameterValues=null){
         try {
             parent::__construct($services, $modelName, $parameterValueList, $parameterValues);
             $this->validateSignature();
+        } catch (unauthorizedException $unauthorizedException) {
+            $this->writeException($unauthorizedException, abstractResponseObject::HTTP_STATUS_401);
+        } catch (forbiddenException $forbiddenException) {
+            $this->writeException($forbiddenException, abstractResponseObject::HTTP_STATUS_403);
+        } catch (entityNotFoundException $entityNotFoundException) {
+            $this->writeException($entityNotFoundException, abstractResponseObject::HTTP_STATUS_404);
         } catch (Exception $exception) {
             $this->writeException($exception);
         }
@@ -74,6 +82,7 @@ class controller extends abstractApiController {
 
     /**
      * @return string
+     * @throws JsonException
      * @noinspection PhpRedundantCatchClauseInspection
      */
     public function render(): string{
@@ -85,11 +94,14 @@ class controller extends abstractApiController {
         /** @var responseInterface $apiResponse */
         try {
             $apiResponse = $this->model->{$this->verb}();
-        } catch (dbRecordNotFoundException $notFoundException) {
-            $apiResponse = new errorResponse(abstractResponseObject::HTTP_STATUS_404, $notFoundException->getMessage(), $notFoundException->getCode());
-        } catch (serviceNotFoundException | dbSqlException | RuntimeException | Exception $exception) {
+        } catch (unauthorizedException $unauthorizedException) {
+            $this->writeException($unauthorizedException, abstractResponseObject::HTTP_STATUS_401);
+        } catch (forbiddenException $forbiddenException) {
+            $this->writeException($forbiddenException, abstractResponseObject::HTTP_STATUS_403);
+        } catch (entityNotFoundException $entityNotFoundException) {
+            $this->writeException($entityNotFoundException, abstractResponseObject::HTTP_STATUS_404);
+        } catch (Exception $exception) {
             $this->writeException($exception);
-            exit;
         }
 
         $code = $apiResponse->getStatus();
@@ -108,16 +120,18 @@ class controller extends abstractApiController {
 
     /**
      * @param Exception $e
-     * @return void
+     * @param string $httpStatusCode
+     * @throws JsonException
      */
-    public function writeException(Exception $e): void {
-        $error = new errorResponse(500, $e->getMessage(), $e->getCode());
+    public function writeException(Exception $e, string $httpStatusCode = abstractResponseObject::HTTP_STATUS_500): void {
+        // TODO add $httpStatusCode to controllerInterface
+        $error = new errorResponse($httpStatusCode, $e->getMessage(), $e->getCode());
 
-        $httpStatusCode = $error->getStatus();
         $GLOBALS['http_response_code'] = $httpStatusCode;
 
         header(dataResponse::generateProtocol() . ' ' . $httpStatusCode . ' ' . $error->generateText());
 
         echo $error->toJson();
+        exit;
     }
 }
