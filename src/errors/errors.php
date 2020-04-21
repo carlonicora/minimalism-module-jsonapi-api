@@ -5,7 +5,7 @@ use carlonicora\minimalism\services\logger\abstracts\abstractErrors;
 
 class errors extends abstractErrors {
     /** @var string  */
-    public const LOGGER_SERVICE_NAME = 'minimalism-service-mysql';
+    public const LOGGER_SERVICE_NAME = 'minimalism-module-jsonapi-api';
 
     /** @var int  */
     public const FATAL_INITIALIZE_ERROR = 1;

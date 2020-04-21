@@ -48,7 +48,8 @@ class controller extends abstractApiController {
             $this->writeException($entityNotFoundException, abstractResponseObject::HTTP_STATUS_404);
         } catch (Error $error) {
             try {
-                $this->loggerWriteError(errors::FATAL_INITIALIZE_ERROR, 'FATAL ERROR while initializing', null, $error);
+                $message = $error->getMessage() . ' in file ' . $error->getFile() . ':' . $error->getLine();
+                $this->loggerWriteError(errors::FATAL_INITIALIZE_ERROR, 'FATAL ERROR while initializing. ' . $message , null, $error);
             } catch (Throwable $throwable) {
                 // Sad, but we can't log a fatal error
             }
@@ -114,7 +115,8 @@ class controller extends abstractApiController {
         } catch (entityNotFoundException $entityNotFoundException) {
             $this->writeException($entityNotFoundException, abstractResponseObject::HTTP_STATUS_404);
         } catch (Error $error) {
-            $this->loggerWriteError(errors::FATAL_RENDER_ERROR, 'FATAL ERROR while rendering', null, $error);
+            $message = $error->getMessage() . ' in file ' . $error->getFile() . ':' . $error->getLine();
+            $this->loggerWriteError(errors::FATAL_RENDER_ERROR, 'FATAL ERROR while rendering. ' . $message, null, $error);
             $exception = new Exception('Server error', errors::FATAL_RENDER_ERROR, $error);
             $this->writeException($exception);
         } catch (Exception $exception) {
