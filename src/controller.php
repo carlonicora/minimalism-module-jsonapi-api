@@ -131,7 +131,12 @@ class controller extends abstractApiController {
         $this->services->destroyStatics();
 
         if (bootstrapper::$servicesCache !== null){
-            file_put_contents(bootstrapper::$servicesCache, serialize($this->services));
+            try {
+                file_put_contents(bootstrapper::$servicesCache, serialize($this->services));
+            } catch (Throwable $exception) {
+                $message = 'Services could not be cached. Services object:' . PHP_EOL . print_r($this->services, true);
+                $this->loggerWriteError(errors::SERVICE_CACHE_ERROR, $message, errors::LOGGER_SERVICE_NAME, $exception);
+            }
         }
 
         return $apiResponse->toJson();
