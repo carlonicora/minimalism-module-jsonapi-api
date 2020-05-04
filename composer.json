@@ -6,7 +6,7 @@
   "time": "2020-04-05",
   "license": "MIT",
   "type": "library",
-  "minimum-stability": "stable",
+  "minimum-stability": "beta",
   "authors": [
     {
       "name": "Carlo Nicora",
@@ -25,6 +25,8 @@
     "carlonicora/minimalism": "~10.0",
     "carlonicora/minimalism-service-jsonapi": "~1.0",
     "carlonicora/minimalism-service-security": "~1.0",
-    "carlonicora/minimalism-service-encrypter": "~1.0"
+    "carlonicora/minimalism-service-encrypter": "~1.0",
+    "carlonicora/minimalism-service-mysql": "~1.0",
+    "ext-json": "*"
   }
 }

@@ -22,10 +22,8 @@ use JsonException;
 use Throwable;
 
 class controller extends abstractApiController {
-    use httpHeaders, logger;
-
-    /** @var string */
-    private string $signature;
+    use httpHeaders;
+    use logger;
 
     /**
      * controller constructor.
@@ -69,11 +67,11 @@ class controller extends abstractApiController {
     protected function validateSignature(): void {
         /** @var security $security */
         $security = $this->services->service(security::class);
-        $this->signature =$this->getHeader($security->getHttpHeaderSignature());
+        $signature =$this->getHeader($security->getHttpHeaderSignature());
 
         $url = $_SERVER['REQUEST_URI'];
 
-        $security->validateSignature($this->signature, $this->verb, $url, $this->bodyParameters, $security->getSecurityClient(), $security->getSecuritySession());
+        $security->validateSignature($signature, $this->verb, $url, $this->bodyParameters, $security->getSecurityClient(), $security->getSecuritySession());
     }
 
     /**

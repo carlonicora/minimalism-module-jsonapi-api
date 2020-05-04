@@ -6,14 +6,18 @@ use carlonicora\minimalism\core\services\exceptions\configurationException;
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\services\encrypter\encrypter;
+use carlonicora\minimalism\services\jsonapi\interfaces\jsonapiModelInterface;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
 use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
 use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\jsonapi\traits\modelTrait;
 use carlonicora\minimalism\services\MySQL\exceptions\dbRecordNotFoundException;
 use carlonicora\minimalism\services\MySQL\exceptions\dbSqlException;
 use Exception;
 
-abstract class abstractModel extends abstractApiModel {
+abstract class abstractModel extends abstractApiModel implements jsonapiModelInterface {
+    use modelTrait;
+
     /** @var dataResponse  */
     protected dataResponse $response;
 
