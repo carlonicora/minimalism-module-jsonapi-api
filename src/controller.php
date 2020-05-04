@@ -9,12 +9,12 @@ use carlonicora\minimalism\core\traits\httpHeaders;
 use carlonicora\minimalism\modules\jsonapi\api\errors\errors;
 use carlonicora\minimalism\modules\jsonapi\api\exceptions\entityNotFoundException;
 use carlonicora\minimalism\modules\jsonapi\api\exceptions\forbiddenException;
-use carlonicora\minimalism\modules\jsonapi\api\exceptions\unauthorizedException;
 use carlonicora\minimalism\services\jsonapi\abstracts\abstractResponseObject;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
 use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
 use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
 use carlonicora\minimalism\services\logger\traits\logger;
+use carlonicora\minimalism\services\security\exceptions\unauthorisedException;
 use carlonicora\minimalism\services\security\security;
 use Error;
 use Exception;
@@ -40,8 +40,8 @@ class controller extends abstractApiController {
             $this->loggerInitialise($services);
             parent::__construct($services, $modelName, $parameterValueList, $parameterValues);
             $this->validateSignature();
-        } catch (unauthorizedException $unauthorizedException) {
-            $this->writeException($unauthorizedException, abstractResponseObject::HTTP_STATUS_401);
+        } catch (unauthorisedException $unauthorisedException) {
+            $this->writeException($unauthorisedException, abstractResponseObject::HTTP_STATUS_401);
         } catch (forbiddenException $forbiddenException) {
             $this->writeException($forbiddenException, abstractResponseObject::HTTP_STATUS_403);
         } catch (entityNotFoundException $entityNotFoundException) {
@@ -108,8 +108,8 @@ class controller extends abstractApiController {
         /** @var responseInterface $apiResponse */
         try {
             $apiResponse = $this->model->{$this->verb}();
-        } catch (unauthorizedException $unauthorizedException) {
-            $this->writeException($unauthorizedException, abstractResponseObject::HTTP_STATUS_401);
+        } catch (unauthorisedException $unauthorisedException) {
+            $this->writeException($unauthorisedException, abstractResponseObject::HTTP_STATUS_401);
         } catch (forbiddenException $forbiddenException) {
             $this->writeException($forbiddenException, abstractResponseObject::HTTP_STATUS_403);
         } catch (entityNotFoundException $entityNotFoundException) {
