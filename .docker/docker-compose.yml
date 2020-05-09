@@ -3,7 +3,13 @@ version: '3.7'
 services:
   minimalism-module-jsonapi-api:
     container_name: minimalism-module-jsonapi-api
-    image: carlonicora/php-cli-base:7.4.3.2
+    image: carlonicora/minimalism-module-jsonapi-api:2.0.0
+    build:
+      context: .
+      dockerfile: ./php-cli/Dockerfile
+      args:
+        - XDEBUG_HOST=${XDEBUG_HOST}
+        - XDEBUG_PORT=${XDEBUG_PORT}
     working_dir: /app
     volumes:
       - ../:/app
