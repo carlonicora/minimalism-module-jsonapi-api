@@ -6,13 +6,12 @@ use carlonicora\minimalism\core\modules\abstracts\controllers\abstractApiControl
 use carlonicora\minimalism\core\services\exceptions\serviceNotFoundException;
 use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\core\traits\httpHeaders;
-use carlonicora\minimalism\modules\jsonapi\api\errors\errors;
-use carlonicora\minimalism\modules\jsonapi\api\exceptions\entityNotFoundException;
-use carlonicora\minimalism\modules\jsonapi\api\exceptions\forbiddenException;
-use carlonicora\minimalism\services\jsonapi\abstracts\abstractResponseObject;
+use carlonicora\minimalism\modules\jsonapi\api\errors\EErrors;
+use carlonicora\minimalism\modules\jsonapi\api\exceptions\EEntityNotFoundException;
+use carlonicora\minimalism\modules\jsonapi\api\exceptions\FForbiddenException;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
-use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
-use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\jsonapi\jsonApiDocument;
+use carlonicora\minimalism\services\jsonapi\resources\errorObject;
 use carlonicora\minimalism\services\logger\traits\logger;
 use carlonicora\minimalism\services\security\exceptions\unauthorisedException;
 use carlonicora\minimalism\services\security\security;
@@ -21,9 +20,12 @@ use Exception;
 use JsonException;
 use Throwable;
 
-class controller extends abstractApiController {
+class CController extends abstractApiController {
     use httpHeaders;
     use logger;
+
+    /** @var jsonApiDocument  */
+    private jsonApiDocument $response;
 
     /**
      * controller constructor.
@@ -34,30 +36,31 @@ class controller extends abstractApiController {
      * @throws JsonException
      */
     public function __construct(servicesFactory $services, string $modelName=null, array $parameterValueList=null, array $parameterValues=null){
+        $this->response = new jsonApiDocument();
+
         try {
             $this->loggerInitialise($services);
             parent::__construct($services, $modelName, $parameterValueList, $parameterValues);
             $this->validateSignature();
         } catch (unauthorisedException $unauthorisedException) {
-            $this->writeException($unauthorisedException, abstractResponseObject::HTTP_STATUS_401);
-        } catch (forbiddenException $forbiddenException) {
-            $this->writeException($forbiddenException, abstractResponseObject::HTTP_STATUS_403);
-        } catch (entityNotFoundException $entityNotFoundException) {
-            $this->writeException($entityNotFoundException, abstractResponseObject::HTTP_STATUS_404);
+            $this->writeException($unauthorisedException, responseInterface::HTTP_STATUS_401);
+        } catch (FForbiddenException $forbiddenException) {
+            $this->writeException($forbiddenException, responseInterface::HTTP_STATUS_403);
+        } catch (EEntityNotFoundException $entityNotFoundException) {
+            $this->writeException($entityNotFoundException, responseInterface::HTTP_STATUS_404);
         } catch (Error $error) {
             try {
                 $message = $error->getMessage() . ' in file ' . $error->getFile() . ':' . $error->getLine();
-                $this->loggerWriteError(errors::FATAL_INITIALIZE_ERROR, 'FATAL ERROR while initializing. ' . $message , null, $error);
+                $this->loggerWriteError(EErrors::FATAL_INITIALIZE_ERROR, 'FATAL ERROR while initializing. ' . $message , null, $error);
             } catch (Throwable $throwable) {
                 // Sad, but we can't log a fatal error
             }
-            $exception = new Exception('Server error', errors::FATAL_INITIALIZE_ERROR, $error);
+            $exception = new Exception('Server error', EErrors::FATAL_INITIALIZE_ERROR, $error);
             $this->writeException($exception);
         } catch (Exception $exception) {
             $this->writeException($exception);
         }
     }
-
 
     /**
      *
@@ -98,33 +101,32 @@ class controller extends abstractApiController {
      * @noinspection PhpRedundantCatchClauseInspection
      */
     public function render(): string{
-        /** @var errorResponse $error  */
+        /** @var errorObject $error  */
         if (($error = $this->model->preRender()) !== null){
-            return $error->toJson();
+            $this->response->addError($error);
+        } else {
+            /** @var responseInterface $apiResponse */
+            try {
+                $this->response = $this->model->{$this->verb}();
+            } catch (unauthorisedException $unauthorisedException) {
+                $this->writeException($unauthorisedException, responseInterface::HTTP_STATUS_401);
+            } catch (FForbiddenException $forbiddenException) {
+                $this->writeException($forbiddenException, responseInterface::HTTP_STATUS_403);
+            } catch (EEntityNotFoundException $entityNotFoundException) {
+                $this->writeException($entityNotFoundException, responseInterface::HTTP_STATUS_404);
+            } catch (Error $error) {
+                $message = $error->getMessage() . ' in file ' . $error->getFile() . ':' . $error->getLine();
+                $this->loggerWriteError(EErrors::FATAL_RENDER_ERROR, 'FATAL ERROR while rendering. ' . $message, null, $error);
+                $exception = new Exception('Server error', EErrors::FATAL_RENDER_ERROR, $error);
+                $this->writeException($exception);
+            } catch (Exception $exception) {
+                $this->writeException($exception);
+            }
         }
 
-        /** @var responseInterface $apiResponse */
-        try {
-            $apiResponse = $this->model->{$this->verb}();
-        } catch (unauthorisedException $unauthorisedException) {
-            $this->writeException($unauthorisedException, abstractResponseObject::HTTP_STATUS_401);
-        } catch (forbiddenException $forbiddenException) {
-            $this->writeException($forbiddenException, abstractResponseObject::HTTP_STATUS_403);
-        } catch (entityNotFoundException $entityNotFoundException) {
-            $this->writeException($entityNotFoundException, abstractResponseObject::HTTP_STATUS_404);
-        } catch (Error $error) {
-            $message = $error->getMessage() . ' in file ' . $error->getFile() . ':' . $error->getLine();
-            $this->loggerWriteError(errors::FATAL_RENDER_ERROR, 'FATAL ERROR while rendering. ' . $message, null, $error);
-            $exception = new Exception('Server error', errors::FATAL_RENDER_ERROR, $error);
-            $this->writeException($exception);
-        } catch (Exception $exception) {
-            $this->writeException($exception);
-        }
+        $GLOBALS['http_response_code'] = $this->response->getStatus();
 
-        $code = $apiResponse->getStatus();
-        $GLOBALS['http_response_code'] = $code;
-
-        header(dataResponse::generateProtocol() . ' ' . $code . ' ' . $apiResponse->generateText());
+        header( jsonApiDocument::generateProtocol() . ' ' . $this->response->getStatus() . ' ' . $this->response->generateText());
 
         $this->services->destroyStatics();
 
@@ -133,11 +135,11 @@ class controller extends abstractApiController {
                 file_put_contents(bootstrapper::$servicesCache, serialize($this->services));
             } catch (Throwable $exception) {
                 $message = 'Services could not be cached. Services object:' . PHP_EOL . print_r($this->services, true);
-                $this->loggerWriteError(errors::SERVICE_CACHE_ERROR, $message, errors::LOGGER_SERVICE_NAME, $exception);
+                $this->loggerWriteError(EErrors::SERVICE_CACHE_ERROR, $message, EErrors::LOGGER_SERVICE_NAME, $exception);
             }
         }
 
-        return $apiResponse->toJson();
+        return $this->response->toJson();
     }
 
     /**
@@ -145,14 +147,14 @@ class controller extends abstractApiController {
      * @param string $httpStatusCode
      * @throws JsonException
      */
-    public function writeException(Throwable $e, string $httpStatusCode = abstractResponseObject::HTTP_STATUS_500): void {
-        $error = new errorResponse($httpStatusCode, $e->getMessage(), $e->getCode());
+    public function writeException(Throwable $e, string $httpStatusCode = responseInterface::HTTP_STATUS_500): void {
+        $this->response->addError(new errorObject($httpStatusCode, $httpStatusCode, $e->getMessage(), $e->getCode()));
 
         $GLOBALS['http_response_code'] = $httpStatusCode;
 
-        header(dataResponse::generateProtocol() . ' ' . $httpStatusCode . ' ' . $error->generateText());
+        header(jsonApiDocument::generateProtocol() . ' ' . $httpStatusCode . ' ' . $this->response->generateText());
 
-        echo $error->toJson();
+        echo $this->response->toJson();
         exit;
     }
 }

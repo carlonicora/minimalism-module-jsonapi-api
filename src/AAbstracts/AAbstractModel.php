@@ -8,21 +8,21 @@ use carlonicora\minimalism\core\services\factories\servicesFactory;
 use carlonicora\minimalism\services\encrypter\encrypter;
 use carlonicora\minimalism\services\jsonapi\interfaces\jsonapiModelInterface;
 use carlonicora\minimalism\services\jsonapi\interfaces\responseInterface;
-use carlonicora\minimalism\services\jsonapi\responses\dataResponse;
-use carlonicora\minimalism\services\jsonapi\responses\errorResponse;
+use carlonicora\minimalism\services\jsonapi\jsonApiDocument;
+use carlonicora\minimalism\services\jsonapi\resources\errorObject;
 use carlonicora\minimalism\services\jsonapi\traits\modelTrait;
 use carlonicora\minimalism\services\MySQL\exceptions\dbRecordNotFoundException;
 use carlonicora\minimalism\services\MySQL\exceptions\dbSqlException;
 use Exception;
 
-abstract class abstractModel extends abstractApiModel implements jsonapiModelInterface {
+abstract class AAbstractModel extends abstractApiModel implements jsonapiModelInterface {
     use modelTrait;
 
-    /** @var dataResponse  */
-    protected dataResponse $response;
+    /** @var jsonApiDocument  */
+    protected jsonApiDocument $response;
 
-    /** @var errorResponse|null  */
-    protected ?errorResponse $error=null;
+    /** @var errorObject|null  */
+    protected ?errorObject $error=null;
 
     /** @var encrypter */
     protected $encrypter;
@@ -37,18 +37,18 @@ abstract class abstractModel extends abstractApiModel implements jsonapiModelInt
      * @throws Exception
      */
     public function __construct(servicesFactory $services, array $passedParameters, string $verb, array $file=null) {
-        // Encrypter should be initialises before calling parent construct
         $this->encrypter = $services->service(encrypter::class);
+
         parent::__construct($services, $passedParameters, $verb, $file);
-        $this->response = new dataResponse();
+
+        $this->response = new jsonApiDocument();
     }
 
     /**
      * @param string $parameter
      * @return string
      */
-    protected function decryptParameter(string $parameter) : string {
-        // Override this method if you need decryption
+    public function decryptParameter(string $parameter) : string {
         return $this->encrypter->decryptId($parameter);
     }
 
@@ -61,7 +61,12 @@ abstract class abstractModel extends abstractApiModel implements jsonapiModelInt
      * @noinspection PhpDocRedundantThrowsInspection
      */
     public function DELETE(): responseInterface {
-        return new errorResponse(errorResponse::HTTP_STATUS_405);
+        $this->response->addError(new errorObject(
+            responseInterface::HTTP_STATUS_405,
+            responseInterface::HTTP_STATUS_405
+        ));
+
+        return $this->response;
     }
 
     /**
@@ -73,7 +78,12 @@ abstract class abstractModel extends abstractApiModel implements jsonapiModelInt
      * @noinspection PhpDocRedundantThrowsInspection
      */
     public function GET(): responseInterface {
-        return new errorResponse(errorResponse::HTTP_STATUS_405);
+        $this->response->addError(new errorObject(
+            responseInterface::HTTP_STATUS_405,
+            responseInterface::HTTP_STATUS_405
+        ));
+
+        return $this->response;
     }
 
     /**
@@ -85,7 +95,12 @@ abstract class abstractModel extends abstractApiModel implements jsonapiModelInt
      * @noinspection PhpDocRedundantThrowsInspection
      */
     public function POST(): responseInterface {
-        return new errorResponse(errorResponse::HTTP_STATUS_405);
+        $this->response->addError(new errorObject(
+            responseInterface::HTTP_STATUS_405,
+            responseInterface::HTTP_STATUS_405
+        ));
+
+        return $this->response;
     }
 
     /**
@@ -97,13 +112,26 @@ abstract class abstractModel extends abstractApiModel implements jsonapiModelInt
      * @noinspection PhpDocRedundantThrowsInspection
      */
     public function PUT(): responseInterface {
-        return new errorResponse(errorResponse::HTTP_STATUS_405);
+        $this->response->addError(new errorObject(
+            responseInterface::HTTP_STATUS_405,
+            responseInterface::HTTP_STATUS_405
+        ));
+
+        return $this->response;
     }
 
     /**
-     * @return errorResponse|null
+     * @return errorObject|null
      */
-    public function preRender() : ?errorResponse {
+    public function preRender() : ?errorObject {
         return $this->error;
+    }
+
+    /**
+     * @param $parameter
+     * @return jsonApiDocument
+     */
+    public function validateJsonapiParameter($parameter): jsonApiDocument{
+        return new jsonApiDocument($parameter);
     }
 }

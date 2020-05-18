@@ -4,14 +4,14 @@ namespace carlonicora\minimalism\modules\jsonapi\api\exceptions;
 use RuntimeException;
 use Throwable;
 
-class forbiddenException extends RuntimeException {
+class EEntityNotFoundException extends RuntimeException {
 
     /**
-     * forbiddenException constructor.
+     * entityNotFoundException constructor.
      * @param string $code
      * @param Throwable|null $previous
      */
     public function __construct(string $code, Throwable $previous = null) {
-        parent::__construct('Access denied', $code, $previous);
+        parent::__construct('Not found', $code, $previous);
     }
 }

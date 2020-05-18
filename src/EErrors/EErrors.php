@@ -3,7 +3,7 @@ namespace carlonicora\minimalism\modules\jsonapi\api\errors;
 
 use carlonicora\minimalism\services\logger\abstracts\abstractErrors;
 
-class errors extends abstractErrors {
+class EErrors extends abstractErrors {
     /** @var string */
     public const LOGGER_SERVICE_NAME = 'minimalism-module-jsonapi-api';
 
