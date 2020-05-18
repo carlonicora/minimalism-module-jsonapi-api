@@ -1,7 +1,7 @@
 <?php
 namespace tests\unit;
 
-use carlonicora\minimalism\modules\jsonapi\api\abstracts\AAbstractModel;
+use CarloNicora\Minimalism\Modules\JsonApi\api\abstracts\AbstractModel;
 use PHPUnit\Framework\MockObject\MockObject;
 use tests\abstracts\abstractTestCase;
 use tests\traits\arraysTrait;
@@ -13,7 +13,7 @@ class modelTest extends abstractTestCase
     public function testModelInitialisation(): MockObject
     {
         $model = $this->getMockForAbstractClass(
-            AAbstractModel::class,
+            AbstractModel::class,
             [$this->servicesFactory, [], 'GET', null]
         );
 
@@ -23,7 +23,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testValidateJsonapiParameterSimpleObject(MockObject $model): void
@@ -34,7 +34,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testValidateParameterDecryptionSimpleObject(MockObject $model): void
@@ -45,7 +45,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testNullPreRender(MockObject $model): void
@@ -54,7 +54,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testPUT(MockObject $model): void
@@ -64,7 +64,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testGET(MockObject $model): void
@@ -74,7 +74,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testPOST(MockObject $model): void
@@ -84,7 +84,7 @@ class modelTest extends abstractTestCase
     }
 
     /**
-     * @param MockObject|AAbstractModel $model
+     * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
      */
     public function testDELETE(MockObject $model): void

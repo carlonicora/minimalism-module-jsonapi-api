@@ -17,12 +17,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "carlonicora\\minimalism\\modules\\jsonapi\\api\\":"src/"
+      "CarloNicora\\Minimalism\\Modules\\JsonApi\\Api\\":"src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "tests\\": "tests/"
+      "CarloNicora\\Minimalism\\Modules\\JsonApi\\Api\\Tests\\": "tests/"
     }
   },
   "require": {

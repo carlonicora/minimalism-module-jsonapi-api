@@ -1,10 +1,10 @@
 <?php
 namespace tests\abstracts;
 
-use carlonicora\minimalism\core\services\factories\servicesFactory;
-use carlonicora\minimalism\services\encrypter\encrypter;
-use carlonicora\minimalism\services\logger\logger;
-use carlonicora\minimalism\services\paths\paths;
+use CarloNicora\Minimalism\Core\Services\factories\ServicesFactory;
+use CarloNicora\Minimalism\Services\Encrypter\Encrypter;
+use CarloNicora\Minimalism\Services\logger\logger;
+use CarloNicora\Minimalism\Services\paths\paths;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +47,7 @@ abstract class abstractTestCase extends TestCase
 
         $this->servicesFactory->method('service')
             ->with($this->logicalOr(
-                encrypter::class,
+                Encrypter::class,
                 logger::class,
                 paths::class
             ))
@@ -61,7 +61,7 @@ abstract class abstractTestCase extends TestCase
     public function returnService(string $serviceName): MockObject
     {
         switch ($serviceName) {
-            case encrypter::class:
+            case Encrypter::class:
                 return $this->encrypterService;
                 break;
             case logger::class:
@@ -76,7 +76,7 @@ abstract class abstractTestCase extends TestCase
 
     private function initialiseEncrypterService(): void
     {
-        $this->encrypterService = $this->getMockBuilder(encrypter::class)
+        $this->encrypterService = $this->getMockBuilder(Encrypter::class)
             ->disableOriginalConstructor()
             ->getMock();
 
