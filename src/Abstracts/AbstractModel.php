@@ -1,5 +1,5 @@
 <?php
-namespace CarloNicora\Minimalism\Modules\JsonApi\api\abstracts;
+namespace CarloNicora\Minimalism\Modules\JsonApi\Api\Abstracts;
 
 use CarloNicora\JsonApi\Document;
 use CarloNicora\JsonApi\Objects\Error;
@@ -8,9 +8,10 @@ use CarloNicora\Minimalism\Core\Response;
 use CarloNicora\Minimalism\Core\Services\Exceptions\ConfigurationException;
 use CarloNicora\Minimalism\Core\Services\Exceptions\ServiceNotFoundException;
 use CarloNicora\Minimalism\Services\Encrypter\Encrypter;
+use CarloNicora\Minimalism\Services\Encrypter\ParameterValidator\Decrypter;
+use CarloNicora\Minimalism\Services\ParameterValidator\Interfaces\DecrypterInterface;
 use Exception;
 use JsonException;
-use Throwable;
 
 abstract class AbstractModel extends abstractApiModel {
     /** @var Response  */
@@ -26,26 +27,27 @@ abstract class AbstractModel extends abstractApiModel {
      */
     public function initialise(array $passedParameters, array $file = null): void
     {
+        $this->encrypter = $this->services->service(Encrypter::class);
+
         parent::initialise($passedParameters, $file);
 
-        $this->encrypter = $this->services->service(Encrypter::class);
         $this->response = new Response();
     }
 
     /**
-     * @param string $parameter
-     * @return string
+     * @return DecrypterInterface
      */
-    public function decryptParameter(string $parameter) : string {
-        return $this->encrypter->decryptId($parameter);
+    public function decrypter(): DecrypterInterface
+    {
+        return new Decrypter($this->encrypter);
     }
 
     /**
-     * @param Throwable $e
+     * @param Exception $e
      * @return Response
      * @throws JsonException
      */
-    public function getResponseFromError(Throwable $e): Response
+    public function getResponseFromError(Exception $e): Response
     {
         $document = new Document();
         $document->addError(new Error($e));
@@ -94,5 +96,26 @@ abstract class AbstractModel extends abstractApiModel {
      */
     public function PUT(): Response {
         return $this->getResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
+    }
+
+    /**
+     * @param Document $document
+     * @param string $status
+     * @return Response
+     */
+    final public function generateResponse(Document $document, string $status) : Response
+    {
+        $response = new Response();
+
+        try {
+            $response->data = $document->export();
+            $response->httpStatus = $status;
+        } catch (JsonException $e) {
+            $response->httpStatus = Response::HTTP_STATUS_500;
+        }
+
+        $response->contentType = 'application/vnd.api+json';
+
+        return $response;
     }
 }
