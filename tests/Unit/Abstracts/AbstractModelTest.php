@@ -2,9 +2,11 @@
 namespace CarloNicora\Minimalism\Modules\JsonApi\Api\Tests\Unit\Abstracts;
 
 use CarloNicora\JsonApi\Document;
+use CarloNicora\Minimalism\Core\Modules\Interfaces\ResponseInterface;
 use CarloNicora\Minimalism\Core\Response;
 use CarloNicora\Minimalism\Modules\JsonApi\Api\Abstracts\AbstractModel;
 use CarloNicora\Minimalism\Modules\JsonApi\Api\Tests\Abstracts\AbstractTestCase;
+use CarloNicora\Minimalism\Modules\JsonApi\JsonApiResponse;
 use CarloNicora\Minimalism\Services\Encrypter\Encrypter;
 use Exception;
 use JsonException;
@@ -44,7 +46,7 @@ class AbstractModelTest extends AbstractTestCase
         $model->initialise(['id'=>$e->encryptId(1)]);
 
         $response = $this->getProperty($model, 'response');
-        $this->assertEquals(new Response(), $response);
+        $this->assertEquals(new JsonApiResponse(), $response);
 
         return $model;
     }
@@ -52,11 +54,10 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
-     * @throws JsonException
      */
     public function testPOST(MockObject $model): void
     {
-        $response = $model->getResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
+        $response = $model->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
 
         $this->assertEquals($response, $model->POST());
     }
@@ -64,11 +65,10 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
-     * @throws JsonException
      */
     public function testGET(MockObject $model): void
     {
-        $response = $model->getResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
+        $response = $model->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
 
         $this->assertEquals($response, $model->GET());
     }
@@ -76,11 +76,10 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
-     * @throws JsonException
      */
     public function testDELETE(MockObject $model): void
     {
-        $response = $model->getResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
+        $response = $model->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
 
         $this->assertEquals($response, $model->DELETE());
     }
@@ -88,11 +87,10 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
-     * @throws JsonException
      */
     public function testPUT(MockObject $model): void
     {
-        $response = $model->getResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
+        $response = $model->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
 
         $this->assertEquals($response, $model->PUT());
     }
@@ -111,10 +109,9 @@ class AbstractModelTest extends AbstractTestCase
         $document->method('export')
             ->willThrowException(new JsonException());
 
-        $response = new Response();
-        $response->contentType = 'application/vnd.api+json';
-        $response->httpStatus = '500';
+        $r = $model->generateResponse($document, Response::HTTP_STATUS_200);
+        $r->getData();
 
-        $this->assertEquals($response, $model->generateResponse($document, Response::HTTP_STATUS_200));
+        $this->assertEquals(ResponseInterface::HTTP_STATUS_500, $r->getStatus());
     }
 }

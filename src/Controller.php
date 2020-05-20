@@ -1,14 +1,12 @@
 <?php
 namespace CarloNicora\Minimalism\Modules\JsonApi\Api;
 
-use CarloNicora\JsonApi\Document;
-use CarloNicora\JsonApi\Objects\Error;
 use CarloNicora\Minimalism\Core\Modules\Abstracts\Controllers\AbstractApiController;
 use CarloNicora\Minimalism\Core\Modules\ErrorController;
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ApiModelInterface;
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ControllerInterface;
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ModelInterface;
-use CarloNicora\Minimalism\Core\Response;
+use CarloNicora\Minimalism\Core\Modules\Interfaces\ResponseInterface;
 use CarloNicora\Minimalism\Core\Services\Exceptions\ServiceNotFoundException;
 use CarloNicora\Minimalism\Core\Services\Factories\ServicesFactory;
 use CarloNicora\Minimalism\Core\Traits\HttpHeadersTrait;
@@ -69,19 +67,16 @@ class Controller extends AbstractApiController {
     }
 
     /**
-     * @return Response
+     * @return ResponseInterface
      * @noinspection PhpRedundantCatchClauseInspection
      */
-    public function render(): Response {
+    public function render(): ResponseInterface {
         try {
             $this->model->preRender();
 
             $response = $this->model->{$this->verb}();
         } catch (Exception $e) {
-            $document = new Document();
-            $document->addError(new Error($e));
-
-            $response = $this->model->generateResponse($document, $document->errors[0]->status ?? '500');
+            $response=$this->model->generateResponseFromError($e);
         }
 
         $this->services->destroyStatics();

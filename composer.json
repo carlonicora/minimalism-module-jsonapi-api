@@ -1,7 +1,7 @@
 {
   "name": "carlonicora/minimalism-module-jsonapi-api",
   "description": "{json:api} api module for minimalism",
-  "version": "2.0.0-beta1",
+  "version": "2.0.0-beta2",
   "homepage": "https://carlonicora.com",
   "time": "2020-04-05",
   "license": "MIT",
@@ -29,6 +29,7 @@
     "php": "^7.4",
     "carlonicora/minimalism": "~11.0",
     "carlonicora/jsonapi": "~2.0",
+    "carlonicora/minimalism-module-jsonapi": "~1.0",
     "carlonicora/minimalism-service-security": "~2.0",
     "carlonicora/minimalism-service-encrypter": "~2.0",
     "carlonicora/minimalism-service-mysql": "~2.0",
