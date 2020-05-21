@@ -2,7 +2,7 @@
 namespace CarloNicora\Minimalism\Modules\JsonApi\Api\Tests\Unit\Validators;
 
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ModelInterface;
-use CarloNicora\Minimalism\Modules\JsonApi\Api\Validators\JsonApiValidator;
+use CarloNicora\Minimalism\Modules\JsonApi\Validators\JsonApiValidator;
 use CarloNicora\Minimalism\Services\ParameterValidator\Objects\ParameterObject;
 use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
