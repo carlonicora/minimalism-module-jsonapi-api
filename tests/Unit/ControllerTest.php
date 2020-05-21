@@ -69,7 +69,7 @@ class ControllerTest extends AbstractTestCase
 
         $errorController = new ErrorController($services);
         $this->setProperty($errorController, 'security', $security);
-        $errorController->setException(new UnauthorisedException('', 2));
+        $errorController->setException(new UnauthorisedException('Unauthorised', 2));
 
         $this->assertEquals($errorController, $controller->postInitialise());
     }

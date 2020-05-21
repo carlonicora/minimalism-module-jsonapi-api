@@ -11,8 +11,11 @@ use CarloNicora\Minimalism\Core\Services\Exceptions\ServiceNotFoundException;
 use CarloNicora\Minimalism\Core\Services\Factories\ServicesFactory;
 use CarloNicora\Minimalism\Core\Traits\HttpHeadersTrait;
 use CarloNicora\Minimalism\Modules\JsonApi\Api\Abstracts\AbstractModel;
+use CarloNicora\Minimalism\Services\Security\Events\SecurityErrorEvents;
+use CarloNicora\Minimalism\Services\Security\Exceptions\UnauthorisedException;
 use CarloNicora\Minimalism\Services\Security\Security;
 use Exception;
+use Throwable;
 
 class Controller extends AbstractApiController {
     use HttpHeadersTrait;
@@ -57,13 +60,19 @@ class Controller extends AbstractApiController {
 
         $url = $_SERVER['REQUEST_URI'];
 
-        $this->security->validateSignature(
-            $signature,
-            $this->verb,
-            $url,
-            $this->bodyParameters,
-            $this->security->getSecurityClient(),
-            $this->security->getSecuritySession());
+        try {
+            $this->security->validateSignature(
+                $signature,
+                $this->verb,
+                $url,
+                $this->bodyParameters,
+                $this->security->getSecurityClient(),
+                $this->security->getSecuritySession());
+        } catch (Throwable $e) {
+            $this->services->logger()->error()
+                ->log(SecurityErrorEvents::SIGNATURE_MISSED($url, $this->verb, json_encode($this->bodyParameters, JSON_THROW_ON_ERROR)))
+                ->throw(UnauthorisedException::class, 'Unauthorised');
+        }
     }
 
     /**
