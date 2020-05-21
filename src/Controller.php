@@ -34,6 +34,35 @@ class Controller extends AbstractApiController {
     }
 
     /**
+     * @param string|null $modelName
+     * @return ControllerInterface
+     * @throws Exception
+     */
+    public function initialiseModel(string $modelName = null): ControllerInterface
+    {
+        $response = parent::initialiseModel($modelName);
+
+        if ($this->model !== null){
+            $fields = [];
+
+            foreach ($this->passedParameters as $parameterKey=>$parameter) {
+                if ($parameterKey === 'include') {
+                    $this->model->setIncludedResourceTypes(explode(',', $parameter));
+                } elseif (strlen($parameterKey) > 6 && strpos($parameterKey, 'fields') === 0) {
+                    $typeName = substr($parameterKey, 7, -1);
+                    $fields[$typeName] = explode(',', $parameter);
+                }
+            }
+
+            if ($fields !== []){
+                $this->model->setRequiredFields($fields);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * @return ControllerInterface
      */
     public function postInitialise() : ControllerInterface

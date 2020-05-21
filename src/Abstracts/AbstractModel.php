@@ -1,11 +1,13 @@
 <?php
 namespace CarloNicora\Minimalism\Modules\JsonApi\Api\Abstracts;
 
+use CarloNicora\JsonApi\Document;
 use CarloNicora\Minimalism\Core\Modules\abstracts\models\abstractApiModel;
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ResponseInterface;
 use CarloNicora\Minimalism\Core\Response;
 use CarloNicora\Minimalism\Core\Services\Exceptions\ConfigurationException;
 use CarloNicora\Minimalism\Core\Services\Exceptions\ServiceNotFoundException;
+use CarloNicora\Minimalism\Core\Services\Factories\ServicesFactory;
 use CarloNicora\Minimalism\Modules\JsonApi\JsonApiResponse;
 use CarloNicora\Minimalism\Modules\JsonApi\Traits\JsonApiModelTrait;
 use CarloNicora\Minimalism\Services\Encrypter\Encrypter;
@@ -19,8 +21,38 @@ abstract class AbstractModel extends abstractApiModel {
     /** @var JsonApiResponse  */
     protected JsonApiResponse $response;
 
+    /** @var Document  */
+    protected Document $document;
+
     /** @var Encrypter */
     protected Encrypter $encrypter;
+
+    /**
+     * AbstractModel constructor.
+     * @param ServicesFactory $services
+     */
+    public function __construct(ServicesFactory $services)
+    {
+        parent::__construct($services);
+
+        $this->document = new Document();
+    }
+
+    /**
+     * @param array $includedResourceTypes
+     */
+    public function setIncludedResourceTypes(array $includedResourceTypes) : void
+    {
+        $this->document->setIncludedResourceTypes($includedResourceTypes);
+    }
+
+    /**
+     * @param array $requiredFields
+     */
+    public function setRequiredFields(array $requiredFields) : void
+    {
+        $this->document->setRequiredFields($requiredFields);
+    }
 
     /**
      * @param array $passedParameters
@@ -34,6 +66,7 @@ abstract class AbstractModel extends abstractApiModel {
         parent::initialise($passedParameters, $file);
 
         $this->response = new JsonApiResponse();
+
     }
 
     /**
