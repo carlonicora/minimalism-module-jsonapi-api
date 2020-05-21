@@ -85,22 +85,24 @@ class Controller extends AbstractApiController {
      * @throws Exception
      */
     protected function validateSignature(): void {
-        $signature = $this->getHeader($this->security->getHttpHeaderSignature());
+        if ($this->security->getSecurityClient() !== null) {
+            $signature = $this->getHeader($this->security->getHttpHeaderSignature());
 
-        $url = $_SERVER['REQUEST_URI'];
+            $url = $_SERVER['REQUEST_URI'];
 
-        try {
-            $this->security->validateSignature(
-                $signature,
-                $this->verb,
-                $url,
-                $this->bodyParameters,
-                $this->security->getSecurityClient(),
-                $this->security->getSecuritySession());
-        } catch (Throwable $e) {
-            $this->services->logger()->error()
-                ->log(SecurityErrorEvents::SIGNATURE_MISSED($url, $this->verb, json_encode($this->bodyParameters, JSON_THROW_ON_ERROR)))
-                ->throw(UnauthorisedException::class, 'Unauthorised');
+            try {
+                $this->security->validateSignature(
+                    $signature,
+                    $this->verb,
+                    $url,
+                    $this->bodyParameters,
+                    $this->security->getSecurityClient(),
+                    $this->security->getSecuritySession());
+            } catch (Throwable $e) {
+                $this->services->logger()->error()
+                    ->log(SecurityErrorEvents::SIGNATURE_MISSED($url, $this->verb, json_encode($this->bodyParameters, JSON_THROW_ON_ERROR)))
+                    ->throw(UnauthorisedException::class, 'Unauthorised');
+            }
         }
     }
 
