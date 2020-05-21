@@ -43,19 +43,19 @@ class Controller extends AbstractApiController {
         $response = parent::initialiseModel($modelName);
 
         if ($this->model !== null){
-            $fields = [];
-
             foreach ($this->passedParameters as $parameterKey=>$parameter) {
                 if ($parameterKey === 'include') {
                     $this->model->setIncludedResourceTypes(explode(',', $parameter));
-                } elseif (strlen($parameterKey) > 6 && strpos($parameterKey, 'fields') === 0) {
-                    $typeName = substr($parameterKey, 7, -1);
-                    $fields[$typeName] = explode(',', $parameter);
-                }
-            }
+                } elseif ($parameterKey === 'fields') {
+                    if (is_array($parameter)){
+                        $requiredFields = [];
 
-            if ($fields !== []){
-                $this->model->setRequiredFields($fields);
+                        foreach ($parameter as $RequiredFieldsType=>$requiredFieldsValue){
+                            $requiredFields[$RequiredFieldsType] = explode(',', $requiredFieldsValue);
+                        }
+                        $this->model->setRequiredFields($requiredFields);
+                    }
+                }
             }
         }
 
