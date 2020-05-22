@@ -119,7 +119,7 @@ class Controller extends AbstractApiController {
             $response=$this->model->generateResponseFromError($e);
         }
 
-        $this->services->destroyStatics();
+        $this->completeRender($response->getStatus(), $response->getData());
 
         return $response;
     }
