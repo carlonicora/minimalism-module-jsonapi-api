@@ -112,4 +112,11 @@ abstract class AbstractModel extends abstractApiModel {
     public function PUT(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
     }
+
+    /**
+     *
+     */
+    public function preRender(): void
+    {
+    }
 }
