@@ -62,14 +62,18 @@ class ControllerTest extends AbstractTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var MockObject|SecurityClientInterface $securityClientInterface */
+        $securityClientInterface = $this->getMockBuilder(SecurityClientInterface::class)
+            ->getMock();
         $security->method('getHttpHeaderSignature')->willReturn('X-Phlow');
+        $security->method('getSecurityClient')->willReturn($securityClientInterface);
         $security->method('validateSignature')->willThrowException(new UnauthorisedException('', 2));
 
         $this->setProperty($controller, 'security', $security);
 
         $errorController = new ErrorController($services);
         $this->setProperty($errorController, 'security', $security);
-        $errorController->setException(new UnauthorisedException('Unauthorised', 2));
+        $errorController->setException(new UnauthorisedException('Unauthorised', 401));
 
         $this->assertEquals($errorController, $controller->postInitialise());
     }

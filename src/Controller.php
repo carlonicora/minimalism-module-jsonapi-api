@@ -81,7 +81,7 @@ class Controller extends AbstractApiController {
 
     /**
      *
-     * @throws serviceNotFoundException
+     * @throws ServiceNotFoundException
      * @throws Exception
      */
     protected function validateSignature(): void {

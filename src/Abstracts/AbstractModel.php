@@ -2,7 +2,7 @@
 namespace CarloNicora\Minimalism\Modules\JsonApi\Api\Abstracts;
 
 use CarloNicora\JsonApi\Document;
-use CarloNicora\Minimalism\Core\Modules\abstracts\models\abstractApiModel;
+use CarloNicora\Minimalism\Core\Modules\Abstracts\Models\AbstractApiModel;
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ResponseInterface;
 use CarloNicora\Minimalism\Core\Response;
 use CarloNicora\Minimalism\Core\Services\Exceptions\ConfigurationException;
@@ -15,7 +15,7 @@ use CarloNicora\Minimalism\Services\Encrypter\ParameterValidator\Decrypter;
 use CarloNicora\Minimalism\Services\ParameterValidator\Interfaces\DecrypterInterface;
 use Exception;
 
-abstract class AbstractModel extends abstractApiModel {
+abstract class AbstractModel extends AbstractApiModel {
     use JsonApiModelTrait;
 
     /** @var JsonApiResponse  */
@@ -30,6 +30,7 @@ abstract class AbstractModel extends abstractApiModel {
     /**
      * AbstractModel constructor.
      * @param ServicesFactory $services
+     * @throws Exception
      */
     public function __construct(ServicesFactory $services)
     {
@@ -79,8 +80,8 @@ abstract class AbstractModel extends abstractApiModel {
 
     /**
      * @return ResponseInterface
-     * @throws serviceNotFoundException
-     * @throws configurationException
+     * @throws ServiceNotFoundException
+     * @throws ConfigurationException
      */
     public function DELETE(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
@@ -88,8 +89,8 @@ abstract class AbstractModel extends abstractApiModel {
 
     /**
      * @return ResponseInterface
-     * @throws serviceNotFoundException
-     * @throws configurationException
+     * @throws ServiceNotFoundException
+     * @throws ConfigurationException
      */
     public function GET(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
@@ -97,8 +98,8 @@ abstract class AbstractModel extends abstractApiModel {
 
     /**
      * @return ResponseInterface
-     * @throws serviceNotFoundException
-     * @throws configurationException
+     * @throws ServiceNotFoundException
+     * @throws ConfigurationException
      */
     public function POST(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
@@ -106,8 +107,8 @@ abstract class AbstractModel extends abstractApiModel {
 
     /**
      * @return ResponseInterface
-     * @throws serviceNotFoundException
-     * @throws configurationException
+     * @throws ServiceNotFoundException
+     * @throws ConfigurationException
      */
     public function PUT(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
