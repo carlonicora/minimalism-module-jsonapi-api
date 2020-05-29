@@ -81,6 +81,7 @@ class ControllerTest extends AbstractTestCase
     /**
      * @param Controller $controller
      * @depends testPostInitialise
+     * @throws Exception
      */
     public function testRender(Controller $controller): void
     {

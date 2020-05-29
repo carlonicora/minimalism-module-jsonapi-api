@@ -81,7 +81,7 @@ abstract class AbstractModel extends AbstractApiModel {
     /**
      * @return ResponseInterface
      * @throws ServiceNotFoundException
-     * @throws ConfigurationException
+     * @throws ConfigurationException|Exception
      */
     public function DELETE(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
@@ -90,7 +90,7 @@ abstract class AbstractModel extends AbstractApiModel {
     /**
      * @return ResponseInterface
      * @throws ServiceNotFoundException
-     * @throws ConfigurationException
+     * @throws ConfigurationException|Exception
      */
     public function GET(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
@@ -99,7 +99,7 @@ abstract class AbstractModel extends AbstractApiModel {
     /**
      * @return ResponseInterface
      * @throws ServiceNotFoundException
-     * @throws ConfigurationException
+     * @throws ConfigurationException|Exception
      */
     public function POST(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));
@@ -108,7 +108,7 @@ abstract class AbstractModel extends AbstractApiModel {
     /**
      * @return ResponseInterface
      * @throws ServiceNotFoundException
-     * @throws ConfigurationException
+     * @throws ConfigurationException|Exception
      */
     public function PUT(): ResponseInterface {
         return $this->generateResponseFromError(new Exception('Not implemented', (int)Response::HTTP_STATUS_405));

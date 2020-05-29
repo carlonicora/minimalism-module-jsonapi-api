@@ -2,6 +2,7 @@
 namespace CarloNicora\Minimalism\Modules\JsonApi\Api\Tests\Unit\Validators;
 
 use CarloNicora\Minimalism\Core\Modules\Interfaces\ModelInterface;
+use CarloNicora\Minimalism\Core\Services\Factories\ServicesFactory;
 use CarloNicora\Minimalism\Modules\JsonApi\Validators\JsonApiValidator;
 use CarloNicora\Minimalism\Services\ParameterValidator\Objects\ParameterObject;
 use Exception;
@@ -28,6 +29,7 @@ class JsonApiValidatorTest extends TestCase
      */
     public function testCorrectJsonApiParameter() : void
     {
+        $services = new ServicesFactory();
         /** @var MockObject|ParameterObject $parameter */
         $parameter = $this->getMockBuilder(ParameterObject::class)
             ->setConstructorArgs(['one', $this->jsonApi])
@@ -38,7 +40,7 @@ class JsonApiValidatorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $object = new JsonApiValidator($parameter);
+        $object = new JsonApiValidator($services, $parameter);
 
         $object->setParameter($model, $this->jsonApi);
 

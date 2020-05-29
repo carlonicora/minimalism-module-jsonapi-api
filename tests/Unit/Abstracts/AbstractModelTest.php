@@ -54,6 +54,7 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
+     * @throws Exception
      */
     public function testPOST(MockObject $model): void
     {
@@ -65,6 +66,7 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
+     * @throws Exception
      */
     public function testGET(MockObject $model): void
     {
@@ -76,6 +78,7 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
+     * @throws Exception
      */
     public function testDELETE(MockObject $model): void
     {
@@ -87,6 +90,7 @@ class AbstractModelTest extends AbstractTestCase
     /**
      * @param MockObject|AbstractModel $model
      * @depends testModelInitialisation
+     * @throws Exception
      */
     public function testPUT(MockObject $model): void
     {

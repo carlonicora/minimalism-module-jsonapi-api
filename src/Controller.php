@@ -35,12 +35,13 @@ class Controller extends AbstractApiController {
 
     /**
      * @param string|null $modelName
+     * @param string $verb
      * @return ControllerInterface
      * @throws Exception
      */
-    public function initialiseModel(string $modelName = null): ControllerInterface
+    public function initialiseModel(string $modelName = null, string $verb='GET'): ControllerInterface
     {
-        $response = parent::initialiseModel($modelName);
+        $response = parent::initialiseModel($modelName, $this->verb);
 
         if ($this->model !== null){
             foreach ($this->passedParameters as $parameterKey=>$parameter) {
@@ -109,6 +110,7 @@ class Controller extends AbstractApiController {
     /**
      * @return ResponseInterface
      * @noinspection PhpRedundantCatchClauseInspection
+     * @throws Exception
      */
     public function render(): ResponseInterface {
         try {
